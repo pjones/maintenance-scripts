@@ -1,10 +1,12 @@
-{ pkgs ? import <nixpkgs> { }
+{ stdenvNoCC
+, lib
+, makeWrapper
+, bash
+, coreutils
+, findutils
 }:
 let
-  lib = pkgs.lib;
-  stdenv = pkgs.stdenvNoCC;
-
-  deps = with pkgs; [
+  deps = [
     bash
     coreutils
     findutils
@@ -12,12 +14,12 @@ let
 
   path = lib.makeBinPath deps;
 in
-stdenv.mkDerivation {
+stdenvNoCC.mkDerivation {
   name = "maintenance-scripts";
   meta.description = "Peter's maintenance scripts";
 
   phases = [ "unpackPhase" "installPhase" "fixupPhase" ];
-  buildInputs = deps ++ [ pkgs.makeWrapper ];
+  buildInputs = deps ++ [ makeWrapper ];
   src = ./.;
 
   installPhase = ''
